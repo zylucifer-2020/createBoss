@@ -1,0 +1,41 @@
+{
+  "ownerId": "local",
+  "slug": "create-boss",
+  "name": "Boss蒸馏",
+  "version": "2.0.0",
+  "description": "将老板的聊天记录、会议纪要、邮件、批注等材料蒸馏成可复用的Skill，模拟老板的决策风格、沟通方式和管理逻辑",
+  "files": {
+    "SKILL.md": "蒸馏流程和核心指引（入口文件）",
+    "references/skill-template.md": "生成的Boss Skill的标准模板和输出结构",
+    "references/extraction-framework.md": "提取框架和验证方法论",
+    "references/prompts/": "分析与生成的提示词模板",
+    "tools/": "数据解析和Skill管理工具脚本"
+  },
+  "triggers": {
+    "primary": ["创建老板", "模拟老板", "老板评审", "蒸馏老板"],
+    "secondary": ["向上管理", "老板风格", "boss分析"]
+  },
+  "outputStructure": {
+    "parts": [
+      {"id": "judgment", "name": "Boss Judgment", "description": "他如何评判项目、方案、进度、风险、资源和人"},
+      {"id": "management", "name": "Managing Up", "description": "你应如何向上同步、报风险、提方案、争资源、争优先级"},
+      {"id": "persona", "name": "Persona", "description": "他的表达风格、情绪逻辑、管理姿态、压力状态"}
+    ],
+    "operatingLogic": "Persona定语气 → Judgment评项目 → Management给向上管理动作 → 用老板风格输出"
+  },
+  "supportedDataSources": [
+    {"type": "wechat", "parser": "tools/wechat_parser.py", "formats": ["txt", "html", "csv"]},
+    {"type": "feishu", "parser": "tools/feishu_parser.py", "formats": ["json", "txt"]},
+    {"type": "email", "parser": "tools/email_parser.py", "formats": ["eml", "mbox"]},
+    {"type": "generic", "parser": "tools/generic_chat_parser.py", "formats": ["txt", "md"]}
+  ],
+  "qualityStandards": {
+    "judgmentActionable": "能直接用来评估项目，不只是抽象原则",
+    "managementExecutable": "是 checklist 和 if-then 规则，不是空泛建议",
+    "personaIdentifiable": "读几句能认出是这位老板",
+    "honestBoundary": "至少3条具体局限",
+    "internalTension": "至少1对矛盾",
+    "sourceCoverage": "核心判断都有原话支撑"
+  },
+  "createdAt": 1744800000000
+}
