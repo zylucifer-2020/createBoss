@@ -1,0 +1,2 @@
+timestamp	commit	skill	old_score	new_score	status	dimension	note	eval_mode
+2026-04-16T20:15	2a22a59	create-boss	-	69	baseline	-	初始评估	dry_run
