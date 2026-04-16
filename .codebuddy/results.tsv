@@ -1,3 +1,4 @@
 timestamp	commit	skill	old_score	new_score	status	dimension	note	eval_mode
 2026-04-16T20:15	2a22a59	create-boss	-	69	baseline	-	初始评估	dry_run
 2026-04-16T20:20	553cb1a	create-boss	69	72.4	keep	边界条件	补充6个场景+流程引用	dry_run
+2026-04-16T20:25	06285bd	create-boss	72.4	75.7	keep	检查点设计	4个强制确认点+纠正后验证	dry_run
