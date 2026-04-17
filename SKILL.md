@@ -4,7 +4,7 @@ description: |
   将老板的聊天记录、会议纪要、邮件、批注等材料"蒸馏"成可复用的 Skill，模拟老板的决策风格、沟通方式和管理逻辑。
   当用户需要：模拟老板评审项目、向上管理建议、老板风格分析时使用此技能。
   支持触发词：创建老板、模拟老板、老板评审、向上管理、boss分析。
-version: "2.0.0"
+version: "3.0.0"
 ---
 
 # Boss蒸馏 · 从材料到可复用的决策Skill
@@ -171,15 +171,18 @@ version: "2.0.0"
 
 ```
 bosses/{slug}/
-├── SKILL.md                  # 完整组合版（含 Part A/B/C + 运行规则）
+├── SKILL.md                  # 完整组合版（含 Part A/B/C + 运行规则 + 自进化模块）
 ├── judgment.md               # Part A: 项目评判逻辑（独立文件）
 ├── management.md             # Part B: 向上管理建议（独立文件）
 ├── persona.md                # Part C: 表达与行为风格（独立文件）
 ├── judgment_skill.md         # Part A 独立Skill版
 ├── management_skill.md       # Part B 独立Skill版
 ├── persona_skill.md          # Part C 独立Skill版
-├── meta.json                 # 元数据
-├── versions/                 # 版本历史
+├── meta.json                 # 元数据（含进化统计）
+├── versions/                 # 版本历史（每次进化自动归档）
+├── evolution/                # 自进化模块
+│   ├── signals.jsonl          # 进化信号（每行一条JSON）
+│   └── evolution-log.jsonl    # 进化历史记录
 └── knowledge/                # 原始素材
     ├── chats/
     ├── docs/
@@ -449,6 +452,137 @@ Persona 的 Layer 0 规则永远优先。
 - **删除老板**：确认后运行 `tools/skill_writer.py --action delete --slug {slug}`
 - **版本回滚**：确认后运行 `tools/version_manager.py --action rollback --slug {slug} --version {version}`
 - **查看版本历史**：运行 `tools/version_manager.py --action list --slug {slug}`
+
+---
+
+## 自进化机制
+
+> **核心理念**：老板的风格不是一成不变的，Boss Skill也不应该是。让Skill在日常使用中持续学习，越用越准。
+
+### 进化信号采集
+
+每次Boss Skill被调用时，**自动采集**以下信号，写入 `evolution/signals.jsonl`：
+
+| 信号类型 | 采集时机 | 格式 |
+|---------|---------|------|
+| **新原话** | 用户在对话中引用了老板的新原话 | `{"type":"new_quote","quote":"...","context":"...","timestamp":"..."}` |
+| **纠正** | 用户说"他不会这么说/这么做" | `{"type":"correction","wrong":"...","correct":"...","part":"judgment/management/persona","timestamp":"..."}` |
+| **场景补充** | 用户描述了新的场景或决策 | `{"type":"new_scenario","scenario":"...","boss_response":"...","timestamp":"..."}` |
+| **确认** | 用户说"对，他就是这样的" | `{"type":"confirmation","rule_id":"...","timestamp":"..."}` |
+| **使用偏好** | 用户频繁调用某个独立Skill | `{"type":"usage","skill":"{slug}-judgment","timestamp":"..."}` |
+
+**采集原则**：
+- 被动采集，不主动打断用户
+- 只记录用户明确表达的信号，不推断
+- 用户说"不用记"时不记录
+
+### 进化触发条件
+
+当 `evolution/signals.jsonl` 中积累的信号达到以下任一条件时，触发自进化：
+
+| 触发条件 | 说明 |
+|---------|------|
+| 纠正信号 ≥ 3条 | 多次被纠正说明某些规则不准确 |
+| 新原话 ≥ 5条 | 足够的新素材可以提炼新模式 |
+| 新场景 ≥ 3条 | 出现了Skill未覆盖的决策场景 |
+| 距上次进化 ≥ 7天且信号 ≥ 3条 | 定期进化，防止长期偏差累积 |
+
+### 进化执行流程
+
+触发进化时，自动执行：
+
+```
+1. 读取 evolution/signals.jsonl 中未处理的信号
+2. 按三部分分类信号（Judgment / Management / Persona）
+3. 对每个部分：
+   a. 用新信号与现有规则比对
+   b. 新信号验证了现有规则 → 增加置信度，补充例子
+   c. 新信号与现有规则矛盾 → 按冲突处理规则处理
+   d. 新信号揭示了新模式 → 生成新规则，标注"初步观察"
+4. 生成进化报告：
+   - 新增规则 N 条
+   - 修正规则 M 条
+   - 确认规则 K 条
+   - 矛盾标记 P 处
+5. 写入 evolution/evolution-log.jsonl
+6. 更新 Judgment / Management / Persona 文件
+7. 更新 meta.json 中 version 和 updated_at
+8. 清空已处理信号
+```
+
+### 进化报告格式
+
+每次进化后，向用户展示摘要（不打断，附在输出末尾）：
+
+```
+📋 Boss Skill 自进化报告（{name} v{old} → v{new}）
+
+  🆕 新增规则：
+     - Judgment: 「XX场景下他会先问YY」（初步观察，待验证）
+  
+  ✏️ 修正规则：
+     - Persona: 「他不会说XX，而是会说YY」（基于3次纠正）
+  
+  ✅ 确认规则：
+     - Management: 「报风险必须带方案」（3次确认）
+  
+  ⚠️ 矛盾标记：
+     - Judgment说"看重ROI"，但新原话显示"更看重战略卡位"（待观察）
+```
+
+### 进化的安全边界
+
+| 规则 | 说明 |
+|------|------|
+| **新增规则标注"初步观察"** | 新提炼的规则必须经过 ≥ 3次验证才能去掉"初步观察"标签 |
+| **核心规则不轻易改** | Layer 0规则和有≥5次原话支撑的规则，只有≥3次直接矛盾才允许修改 |
+| **进化前自动备份** | 每次进化前，当前版本归档到 `versions/` |
+| **用户可关闭自进化** | 在 meta.json 中设置 `"auto_evolve": false` |
+| **进化不删除规则** | 被替换的旧规则移入"历史判断"区，不删除 |
+
+### 用户主动触发进化
+
+除了自动进化，用户也可以主动触发：
+
+| 用户说 | 触发动作 |
+|--------|---------|
+| "进化一下王总的skill" | 立即执行进化流程 |
+| "王总最近风格有变化" | 提示补充新素材，然后进化 |
+| "验证一下王总的skill准不准" | 跑场景模拟测试，输出准确度报告 |
+| "王总的skill进化历史" | 展示 `evolution/evolution-log.jsonl` |
+
+### 进化目录结构
+
+在Boss Skill目录中新增：
+
+```
+bosses/{slug}/
+├── ...（原有文件）
+├── evolution/
+│   ├── signals.jsonl          # 进化信号（每行一条JSON）
+│   └── evolution-log.jsonl    # 进化历史（每条记录一次进化）
+└── versions/
+    ├── v1/                    # 首版备份
+    ├── v2/                    # 第二版备份
+    └── ...
+```
+
+### meta.json 进化相关字段
+
+```json
+{
+  "version": "v3",
+  "auto_evolve": true,
+  "last_evolved_at": "2026-04-17T09:00:00Z",
+  "evolution_stats": {
+    "total_evolutions": 2,
+    "rules_added": 5,
+    "rules_modified": 3,
+    "rules_confirmed": 8,
+    "signals_processed": 15
+  }
+}
+```
 
 ---
 

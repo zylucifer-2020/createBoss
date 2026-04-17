@@ -2,8 +2,8 @@
   "ownerId": "local",
   "slug": "create-boss",
   "name": "Boss蒸馏",
-  "version": "2.0.0",
-  "description": "将老板的聊天记录、会议纪要、邮件、批注等材料蒸馏成可复用的Skill，模拟老板的决策风格、沟通方式和管理逻辑",
+  "version": "3.0.0",
+  "description": "将老板的聊天记录、会议纪要、邮件、批注等材料蒸馏成可复用的Skill，模拟老板的决策风格、沟通方式和管理逻辑。支持自进化，越用越准。",
   "files": {
     "SKILL.md": "蒸馏流程和核心指引（入口文件）",
     "references/skill-template.md": "生成的Boss Skill的标准模板和输出结构",

@@ -64,6 +64,46 @@ user-invocable: true
 4. 最终用该老板的风格输出
 
 PART C 的 Layer 0 规则永远优先。
+
+---
+
+## 自进化模块
+
+### 信号采集
+
+每次交互时，被动采集以下信号到 `evolution/signals.jsonl`：
+
+| 信号 | 触发条件 | 采集内容 |
+|------|---------|---------|
+| 新原话 | 用户引用了老板原话 | 原话 + 场景 |
+| 纠正 | 用户说"他不会这么说/这么做" | 错误描述 + 正确描述 + 归属部分 |
+| 场景补充 | 用户描述了新决策场景 | 场景 + 老板回应 |
+| 确认 | 用户说"对，他就是这样的" | 确认的规则ID |
+
+### 进化触发
+
+满足以下任一条件时自动进化：
+
+- 纠正信号 ≥ 3条
+- 新原话 ≥ 5条
+- 新场景 ≥ 3条
+- 距上次进化 ≥ 7天且信号 ≥ 3条
+
+### 进化执行
+
+1. 读取未处理信号，按三部分分类
+2. 新信号验证现有规则 → 补充例子
+3. 新信号矛盾现有规则 → 按冲突规则处理
+4. 新信号揭示新模式 → 新增规则（标注"初步观察"）
+5. 生成进化报告附在输出末尾
+6. 更新文件，归档旧版本
+
+### 进化安全边界
+
+- 新增规则标注"初步观察"，≥3次验证后去掉
+- Layer 0 规则和 ≥5次原话支撑的规则不轻易改
+- 进化前自动备份到 `versions/`
+- `meta.json` 中 `"auto_evolve": false` 可关闭
 ```
 
 ---
@@ -308,6 +348,8 @@ user-invocable: true
   "created_at": "{ISO时间}",
   "updated_at": "{ISO时间}",
   "version": "v1",
+  "auto_evolve": true,
+  "last_evolved_at": null,
   "profile": {
     "company": "{公司}",
     "level": "{级别}",
@@ -322,7 +364,14 @@ user-invocable: true
   },
   "impression": "{主观印象}",
   "knowledge_sources": ["{素材来源}"],
-  "corrections_count": 0
+  "corrections_count": 0,
+  "evolution_stats": {
+    "total_evolutions": 0,
+    "rules_added": 0,
+    "rules_modified": 0,
+    "rules_confirmed": 0,
+    "signals_processed": 0
+  }
 }
 ```
 

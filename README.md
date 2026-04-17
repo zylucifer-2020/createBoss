@@ -166,6 +166,49 @@ Q3: 风格印象           例：追结果 重细节 爱追问why
 
 ---
 
+## 越用越准：自进化
+
+**Boss Skill不是静态的，它会在使用中持续学习。**
+
+### 怎么进化的？
+
+```
+你和Skill对话
+  → 每次交互自动采集信号（新原话/纠正/新场景/确认）
+  → 信号积累到阈值，自动触发进化
+  → 新规则补充 / 旧规则修正 / 矛盾标记
+  → 输出末尾附上进化报告
+```
+
+### 你不需要做任何额外操作
+
+| 你说了什么 | Skill自动做了什么 |
+|-----------|-----------------|
+| "他不会这么说，他更直接" | 记录纠正信号，积累到3条后修正Persona |
+| "今天开会老板说了一句'先看ROI'" | 记录新原话，积累到5条后提炼新Judgment规则 |
+| "对，他就是这样的" | 确认现有规则，增加置信度 |
+| 描述了一个新的决策场景 | 记录新场景，补充Skill未覆盖的情况 |
+
+### 进化报告示例
+
+```
+📋 Boss Skill 自进化报告（王总 v2 → v3）
+
+  🆕 新增：Judgment「跨部门协作时他会先看谁牵头」（初步观察）
+  ✏️ 修正：Persona「他不会说"考虑一下"，而是直接说"不行"」（基于3次纠正）
+  ✅ 确认：Management「报风险必须带方案」（3次确认）
+  ⚠️ 矛盾：Judgment说"看重ROI"，但新原话显示"更看重战略卡位"
+```
+
+### 安全边界
+
+- 新规则标注"初步观察"，验证3次后才正式确认
+- 核心规则不轻易改（需要3次直接矛盾才允许修改）
+- 每次进化前自动备份，可随时回滚
+- 在meta.json中设置 `"auto_evolve": false` 可关闭自进化
+
+---
+
 ## 品味守则
 
 写这个Skill时，我们死守这几条：
@@ -212,7 +255,7 @@ create-boss/
 ├── meta.json                             # 元数据
 ├── requirements.txt                      # Python依赖
 ├── references/
-│   ├── skill-template.md                 # Boss Skill标准模板
+│   ├── skill-template.md                 # Boss Skill标准模板（含自进化模块）
 │   ├── extraction-framework.md           # 提取框架和验证方法论
 │   └── prompts/                          # 提示词模板
 │       ├── intake.md                     # 基础信息录入
@@ -231,6 +274,21 @@ create-boss/
     ├── feishu_parser.py                  # 飞书解析
     ├── email_parser.py                   # 邮件解析
     └── generic_chat_parser.py            # 通用文本解析
+```
+
+每个生成的Boss Skill结构：
+
+```
+bosses/{slug}/
+├── SKILL.md                  # 完整组合版（含运行规则+自进化模块）
+├── judgment.md / management.md / persona.md
+├── *_skill.md                # 三个独立调用版
+├── meta.json                 # 元数据（含进化统计）
+├── evolution/                # 🧬 自进化模块
+│   ├── signals.jsonl          # 进化信号采集
+│   └── evolution-log.jsonl    # 进化历史
+├── versions/                 # 版本归档
+└── knowledge/                # 原始素材
 ```
 
 ---
