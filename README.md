@@ -6,7 +6,7 @@
 
 **不是你不行，是你没读懂老板的"操作系统"。**
 
-📺 **宣传视频**：[![点击播放Demo](https://raw.githubusercontent.com/zylucifer-2020/createBoss/main/demo-thumbnail.png)](https://zylucifer-2020.github.io/createBoss/demo.html)
+📺 **宣传视频**：[![点击查看宣传视频](https://img.shields.io/badge/Watch-Demo-00d9ff?style=for-the-badge)](https://zylucifer-2020.github.io/createBoss/demo.html)
 
 Boss蒸馏做的事情很简单：从你和老板的日常交互中，提炼出他的一套决策逻辑——然后装进一个Skill里，随时可以调用。
 
