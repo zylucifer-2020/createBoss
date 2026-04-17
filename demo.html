@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boss蒸馏 - Demo演示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #fff;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d9ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            color: #a0a0a0;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 217, 255, 0.3);
+            background: #000;
+        }
+        video {
+            width: 100%;
+            display: block;
+        }
+        .thumbnail-overlay {
+            position: relative;
+            width: 100%;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .thumbnail-overlay:hover {
+            transform: scale(1.02);
+        }
+        .thumbnail-overlay img {
+            width: 100%;
+            display: block;
+        }
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: rgba(0, 217, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 40px rgba(0, 217, 255, 0.6);
+            transition: all 0.3s ease;
+        }
+        .play-button:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            background: rgba(0, 255, 136, 0.9);
+        }
+        .play-button::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 30px solid #fff;
+            border-top: 18px solid transparent;
+            border-bottom: 18px solid transparent;
+            margin-left: 8px;
+        }
+        .links {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .link-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #00d9ff;
+            transform: translateY(-2px);
+        }
+        .link-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .play-button { width: 70px; height: 70px; }
+            .play-button::after { border-left: 20px solid #fff; border-top: 12px solid transparent; border-bottom: 12px solid transparent; margin-left: 5px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧬 Boss蒸馏 Demo</h1>
+        <p class="subtitle">把老板的"操作系统"装进AI，让决策逻辑可复用</p>
+
+        <div class="video-container">
+            <div class="thumbnail-overlay" id="thumbnail" onclick="playVideo()">
+                <img src="https://raw.githubusercontent.com/zylucifer-2020/createBoss/main/demo-thumbnail.png" alt="视频封面" onerror="this.style.display='none'; document.querySelector('.play-button').innerHTML='▶';">
+                <div class="play-button"></div>
+            </div>
+            <video id="demoVideo" controls style="display: none;">
+                <source src="https://github.com/zylucifer-2020/createBoss/releases/download/v1.0.0/createboss.mp4" type="video/mp4">
+                您的浏览器不支持视频播放
+            </video>
+        </div>
+
+        <div class="links">
+            <a href="https://github.com/zylucifer-2020/createBoss" class="link-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                查看项目主页
+            </a>
+            <a href="https://github.com/zylucifer-2020/createBoss/releases/download/v1.0.0/createboss.mp4" class="link-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                下载视频
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function playVideo() {
+            document.getElementById('thumbnail').style.display = 'none';
+            const video = document.getElementById('demoVideo');
+            video.style.display = 'block';
+            video.play();
+        }
+    </script>
+</body>
+</html>
