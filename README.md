@@ -419,6 +419,7 @@ MIT License - 详见 [LICENSE](./LICENSE)
 
 ## 📬 联系方式
 
+- 📧 邮箱：zylucifer2020@163.com
 - 🐛 Bug报告：[GitHub Issues](https://github.com/zylucifer-2020/createBoss/issues)
 - 💡 功能建议：[GitHub Discussions](https://github.com/zylucifer-2020/createBoss/discussions)
 - ⭐ 欢迎Star：[GitHub Repository](https://github.com/zylucifer-2020/createBoss)
