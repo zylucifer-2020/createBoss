@@ -33,6 +33,20 @@ Boss Distill does one simple thing: extract your boss's decision-making logic fr
 
 ---
 
+## 🙏 Acknowledgments & References
+
+This project was inspired by and references the following excellent projects:
+
+| Project | GitHub | Reference |
+|---------|--------|-----------|
+| **boss-skills** | [vogtsw/boss-skills](https://github.com/vogtsw/boss-skills) | Boss distillation approach |
+| **nuwa-skill** | [alchaincyf/nuwa-skill](https://github.com/alchaincyf/nuwa-skill) | Skill distillation framework |
+| **darwin-skill** | [alchaincyf/darwin-skill](https://github.com/alchaincyf/darwin-skill) | Self-evolution mechanism |
+
+Special thanks to the authors of these projects for their open-source contributions, which made this project possible.
+
+---
+
 ## ✨ Features
 
 | Feature | Description |
