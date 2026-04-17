@@ -6,6 +6,8 @@
 
 **It's not that you're not capable — it's that you haven't understood your boss's "operating system".**
 
+📺 **Demo Video**: [![Watch the demo](https://img.shields.io/badge/Watch-Demo-red)](https://github.com/zylucifer-2020/createBoss/releases/download/v1.0.0/createboss.mp4)
+
 Boss Distill does one simple thing: extract your boss's decision-making logic from your daily interactions with them — and package it into a reusable Skill that you can call on anytime.
 
 [![Version](https://img.shields.io/badge/version-3.0.0-orange)](./meta.json)
