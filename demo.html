@@ -225,10 +225,10 @@
             }
         });
 
-        // Auto-play with muted fallback (browsers block autoplay with sound)
+        // Auto-play with sound
         video.play().catch(() => {
-            video.muted = true;
-            video.play();
+            // If browser blocks autoplay with sound, try again on user interaction
+            document.addEventListener('click', () => { video.play(); }, { once: true });
         });
     </script>
 </body>
