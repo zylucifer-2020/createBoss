@@ -66,7 +66,7 @@ Special thanks to the authors of these projects for their open-source contributi
 
 ### Method 1: Copy Prompt to AI Agent (Recommended)
 
-Copy the following prompt and send it to CodeBuddy or other AI agent:
+Copy the following prompt and send it to OpenClaw, hermes, Claude Code, or other AI agent:
 
 ```markdown
 Please use the create-boss skill (https://github.com/zylucifer-2020/createBoss)
